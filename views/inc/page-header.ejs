@@ -11,7 +11,7 @@
 
             <%- include('header-menu') -%>
 
-                <%if (isHome) { %>
+                <%if (typeof isHome === 'boolean' && isHome) { %>
 
                     <%- include('header-index') -%>
 
