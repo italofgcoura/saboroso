@@ -4,7 +4,9 @@ var express = require('express');
 
 var menus = require('../inc/menus');
 
-var reservations = require('./../inc/reservations');
+var reservations = require('../inc/reservations');
+
+var contacts = require('../inc/contacts');
 
 var router = express.Router();
 
@@ -24,16 +26,6 @@ router.get('/', function(req, res, next) {
 });
 
 
-/* GET contacts page. */
-router.get('/contacts', function(req, res, next) {
-
-    res.render('contacts', {
-        title: 'Contato Restaurante Saboroso',
-        background: 'images/img_bg_3.jpg',
-        h1: 'Diga um oi!'
-    }, );
-});
-
 /* GET menu page. */
 router.get('/menus', function(req, res, next) {
 
@@ -50,14 +42,56 @@ router.get('/menus', function(req, res, next) {
 
 });
 
+
+
 /* GET reservation page. */
-router.get('/reservations', function(req, res, next) {
+router.get('/contacts', function(req, res, next) {
+
+    contacts.render(req, res);
+
+});
+
+/* GET reservation page. */
+router.post('/contacts', function(req, res, next) {
+
+    if (!req.body.name) {
+
+        contacts.render(req, res, "Digite o nome!");
+
+    } else if (!req.body.email) {
+
+        contacts.render(req, res, "Digite o email!");
+
+    } else if (!req.body.message) {
+
+        contacts.render(req, res, "Digite a mensagem!");
+
+    } else {
+
+        contacts.save(req.body).then(results => {
+
+            req.body = {};
+
+            contacts.render(req, res, null, "Mensagem enviada com sucesso")
+
+        }).catch(err => {
+
+            contacts.render(req, res, err.message)
+
+        })
+    }
+
+});
+
+
+/* GET reservation page. */
+router.get('/reservation', function(req, res, next) {
 
     reservations.render(req, res);
 
 });
 
-/* GET reservation page. */
+/* post reservation page. */
 router.post('/reservations', function(req, res, next) {
 
     if (!req.body.name) {
@@ -65,15 +99,29 @@ router.post('/reservations', function(req, res, next) {
         reservations.render(req, res, "Digite o nome!");
 
     } else if (!req.body.email) {
-        res.send("Digite o email.");
+
+        reservations.render(req, res, "Digite o email!");
+
     } else if (!req.body.people) {
-        res.send("Selecione o número de pessoas.");
+
+        reservations.render(req, res, "Selecione a quantodade de pessoas!");
+
     } else if (!req.body.date) {
-        res.send("Digite a data desejada.");
+
+        reservations.render(req, res, "Selecione a data desejada!");
+
     } else if (!req.body.time) {
-        res.send("Selecione a data desejada.");
+
+        reservations.render(req, res, "Selecione a hora desejada!");
+
     } else {
-        res.send(req.body);
+
+        reservations.save(req.body).then(results => {
+            req.body = {};
+            reservations.render(req, res, null, "Reserva realizada com sucesso")
+        }).catch(err => {
+            reservations.render(req, res, err.message)
+        })
     }
 
 });
