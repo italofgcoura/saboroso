@@ -1,6 +1,7 @@
 var express = require('express')
 var users = require('./../inc/users')
 var admin = require('../inc/admin')
+var menu = require('../inc/menus')
 var router = express.Router();
 
 router.use(function(req, res, next, ) {
@@ -102,8 +103,23 @@ router.get("/reservations", function(req, res, next) {
 
 router.get("/menus", function(req, res, next) {
 
-    res.render("admin/menus", admin.getParams(req, { date: {} }))
+    menu.getMenus().then(data => {
 
+        res.render("admin/menus", admin.getParams(req, {
+
+            data
+
+        }));
+
+    }).catch(err => {
+
+        console.error(err)
+
+    });
+});
+
+router.post("/menus", function(req, res, next) {
+    res.send(req.body);
 });
 
 router.get("/users", function(req, res, next) {
